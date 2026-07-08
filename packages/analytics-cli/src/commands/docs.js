@@ -4,6 +4,7 @@ const fs = require('fs')
 const markdownMagic = require('markdown-magic')
 const prettier = require('prettier')
 const dox = require('dox')
+const { client: posthog, distinctId } = require('../posthog')
 
 class DocsCommand extends Command {
   async run() {
@@ -13,6 +14,14 @@ class DocsCommand extends Command {
     ]
     markdownMagic(markdownFiles, config, () => {
       console.log(`Analytics documentation updated ${process.cwd()}`)
+      posthog.capture({
+        distinctId,
+        event: 'docs_generated',
+        properties: {
+          target_directory: process.cwd(),
+        },
+      })
+      posthog.shutdown()
     })
   }
 }

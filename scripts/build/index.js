@@ -5,6 +5,7 @@ const fs = require('fs')
 const clean = require('./_clean')
 const runRollup = require('./_run-rollup')
 const uglify = require('./_uglify')
+const { client: posthog, distinctId } = require('../posthog')
 const dir = process.cwd()
 
 process.env.NODE_ENV = 'production'
@@ -61,10 +62,30 @@ async function runBuild(dir) {
     }
 
     console.log(`Finished ${dir} build`)
+    posthog.capture({
+      distinctId,
+      event: 'package_built',
+      properties: {
+        package_name: pkg.name,
+        package_version: pkg.version,
+        directory: path.basename(dir),
+      },
+    })
+    await posthog.shutdown()
     // console.log('hasIife', hasIife)
     // console.log('data', data)
   } catch (e) {
     console.log('Build error', e)
+    posthog.captureException(e, distinctId, { directory: path.basename(dir) })
+    posthog.capture({
+      distinctId,
+      event: 'package_build_failed',
+      properties: {
+        directory: path.basename(dir),
+        error_message: e && e.message,
+      },
+    })
+    await posthog.shutdown()
     process.exit(1)
   }
 }

@@ -8,6 +8,7 @@
 
 const fs = require('fs')
 const path = require('path')
+const { client: posthog, distinctId } = require('./posthog')
 
 const PACKAGES_DIR = path.join(__dirname, '../packages')
 const RED = '\x1b[31m'
@@ -286,17 +287,34 @@ function verifyBuilds() {
     if (totalMissingFiles > 0) {
       console.log()
       log(RED, '💥 Build verification failed! Please ensure all referenced files exist.')
-      process.exit(1)
+      posthog.capture({
+        distinctId,
+        event: 'build_verification_failed',
+        properties: {
+          total_packages: totalPackages,
+          packages_with_errors: packagesWithErrors,
+          total_missing_files: totalMissingFiles,
+        },
+      })
+      posthog.shutdown().then(() => process.exit(1))
     } else {
       console.log()
       log(GREEN, '🎉 All build outputs verified successfully!')
-      process.exit(0)
+      posthog.capture({
+        distinctId,
+        event: 'build_verified',
+        properties: {
+          total_packages: totalPackages,
+        },
+      })
+      posthog.shutdown().then(() => process.exit(0))
     }
-    
+
   } catch (error) {
     log(RED, `💥 Error during verification: ${error.message}`)
     console.error(error.stack)
-    process.exit(1)
+    posthog.captureException(error, distinctId)
+    posthog.shutdown().then(() => process.exit(1))
   }
 }
 

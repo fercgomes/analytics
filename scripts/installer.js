@@ -2,6 +2,7 @@ const path = require('path')
 const fs = require('fs')
 const globby = require('markdown-magic').globby
 const cp = require("child_process")
+const { client: posthog, distinctId } = require('./posthog')
 
 function installDeps(functionDir, cb) {
   cp.exec("npm i", { cwd: functionDir }, cb)
@@ -24,4 +25,12 @@ function installDeps(functionDir, cb) {
     })
   })
 
+  posthog.capture({
+    distinctId,
+    event: 'examples_installed',
+    properties: {
+      example_count: folders.length,
+    },
+  })
+  await posthog.shutdown()
 })()
