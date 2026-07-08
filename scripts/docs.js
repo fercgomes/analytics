@@ -9,6 +9,7 @@ const parseSourceCode = require('./docs/parse')
 const getPluginDetails = require('./docs/get-plugin-details')
 const indentString = require('indent-string')
 const { getSizeInfo } = require('./getSize')
+const { client: posthog, distinctId } = require('./posthog')
 
 const fileExists = (s) => new Promise(r => fs.access(s, fs.F_OK, e => r(!e)))
 
@@ -875,4 +876,12 @@ const markdownFiles = [
 ]
 markdownMagic(markdownFiles, config, () => {
   console.log('docs done')
+  posthog.capture({
+    distinctId,
+    event: 'docs_script_run',
+    properties: {
+      markdown_files_count: markdownFiles.length - 2, // exclude negation entries
+    },
+  })
+  posthog.shutdown()
 })

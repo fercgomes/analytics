@@ -2,3 +2,5 @@ packages:
   - 'packages/**'
   - '!packages/analytics-core/client/**'
   - '!packages/analytics-core/server/**'
+allowBuilds:
+  core-js: true

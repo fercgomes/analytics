@@ -26,3 +26,4 @@ misc.js
 
 ### VisualStudioCode ###
 .vscode/*
+.env
