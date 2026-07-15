@@ -12,8 +12,8 @@
     "deploy": "netlify deploy --dir dist --prod --site b5accf61-3856-49a1-ac48-86bb06b57d4b"
   },
   "dependencies": {
-    "@analytics/core": "file:../../packages/analytics-core",
     "@analytics/cookie-utils": "file:../../packages/analytics-util-storage-cookie",
+    "@analytics/core": "file:../../packages/analytics-core",
     "@analytics/crazy-egg": "file:../../packages/analytics-plugin-crazy-egg",
     "@analytics/customerio": "file:../../packages/analytics-plugin-customerio",
     "@analytics/fullstory": "file:../../packages/analytics-plugin-fullstory",
@@ -36,6 +36,7 @@
     "analytics-utils": "file:../../packages/analytics-utils",
     "outdent": "^0.7.0",
     "perfume.js": "^5.0.2",
+    "posthog-js": "^1.400.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^6.28.0",

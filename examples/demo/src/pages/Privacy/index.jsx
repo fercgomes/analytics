@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import analytics from '../../utils/analytics'
 import Log from '../../components/Log/index.jsx'
 import Navigation from '../../fragments/Nav/index.jsx'
+import posthog from '../../posthog.js'
 
 export default class App extends Component {
   constructor (props, context) {
@@ -31,6 +32,7 @@ export default class App extends Component {
     analytics.identify('xyz-123', {
       optOut: true
     })
+    posthog.capture('privacy_visitor_opted_out')
   }
 
   clearLog = () => {
@@ -53,14 +55,17 @@ export default class App extends Component {
     const plugins = analytics.getState('plugins')
 
     return Object.keys(plugins).map((name, i) => {
+      const isEnabled = plugins[name].enabled
       const disable = () => {
         analytics.disablePlugin([name])
+        posthog.capture('privacy_plugin_toggled', { plugin: name, action: 'disabled' })
       }
       const enable = () => {
         analytics.enablePlugin([name])
+        posthog.capture('privacy_plugin_toggled', { plugin: name, action: 'enabled' })
       }
-      const word = (plugins[name].enabled) ? 'off' : 'on'
-      const handler = (plugins[name].enabled) ? disable : enable
+      const word = isEnabled ? 'off' : 'on'
+      const handler = isEnabled ? disable : enable
       return (
         <button onClick={handler} key={i}>
           Turn {word} plugin {name}

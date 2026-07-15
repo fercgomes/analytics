@@ -3,6 +3,7 @@ import analytics from '../../utils/analytics'
 import Log from '../../components/Log/index.jsx'
 import Navigation from '../../fragments/Nav/index.jsx'
 import { initialHistory, clearHistory, recordHistory } from '../../utils/analytics/plugins/visualize-analytics'
+import posthog from '../../posthog.js'
 
 export default class App extends Component {
   constructor (props, context) {
@@ -32,6 +33,7 @@ export default class App extends Component {
       traitOne: 'blue',
       traitTwo: 'red',
     })
+    posthog.capture('kitchen_sink_identify_clicked', { variant: 'basic' })
   }
   handleOptOut = () => {
     analytics.identify('xyz-123', {
@@ -90,6 +92,7 @@ export default class App extends Component {
     analytics.track('buttonClick', {
       other: 'wow'
     })
+    posthog.capture('kitchen_sink_track_clicked', { variant: 'primary' })
   }
   handleTrackNoEvent = () => {
     analytics.track({
@@ -124,11 +127,13 @@ export default class App extends Component {
     analytics.disablePlugin(['google-analytics'], (x) => {
       console.log('disabled!', x)
     })
+    posthog.capture('kitchen_sink_plugin_disabled', { plugin: 'google-analytics' })
   }
   handleEnable = () => {
     analytics.enablePlugin(['google-analytics'], (x) => {
       console.log('enableIntegration!', x)
     })
+    posthog.capture('kitchen_sink_plugin_enabled', { plugin: 'google-analytics' })
   }
   sendMalformattedEvent = () => {
     // Malformatted event
@@ -152,6 +157,7 @@ export default class App extends Component {
     }).then(() => {
       console.log('reset promise')
     })
+    posthog.capture('kitchen_sink_visitor_reset')
   }
 
   detachAllListener = () => {

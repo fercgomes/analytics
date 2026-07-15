@@ -4,6 +4,7 @@ import { initialHistory, clearHistory, recordHistory } from '../../utils/analyti
 import analytics from '../../utils/analytics'
 import Navigation from '../../fragments/Nav/index.jsx'
 import Log from '../../components/Log/index.jsx'
+import posthog from '../../posthog.js'
 import './Home.css'
 
 let hasCleared = false
@@ -99,6 +100,7 @@ export default class App extends Component {
     analytics.page(() => {
       console.log('page callback doPage')
     })
+    posthog.capture('home_demo_page_fired')
     console.log('Page async fire this after')
   }
   doTrack = async () => {
@@ -111,6 +113,7 @@ export default class App extends Component {
     }).then((what) => {
       console.log('promises work!', what)
     })
+    posthog.capture('home_demo_track_fired')
     console.log('other thing')
   }
   doIdentify = () => {
@@ -125,6 +128,7 @@ export default class App extends Component {
    }, () => {
      console.log('identify callback')
    })
+    posthog.capture('home_demo_identify_fired')
   }
   render() {
     return (

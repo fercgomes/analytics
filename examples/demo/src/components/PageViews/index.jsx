@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useLocation } from "react-router-dom"
 import analytics from '../../utils/analytics'
+import posthog from '../../posthog.js'
 
 const PageViewTracking = () => {
   const location = useLocation()
@@ -14,6 +15,7 @@ const PageViewTracking = () => {
     analytics.page(() => {
       console.log('page callback initial')
     })
+    posthog.capture('$pageview')
   }, [])
 
   useEffect(() => {
@@ -28,6 +30,7 @@ const PageViewTracking = () => {
     analytics.page(() => {
       console.log('page callback componentDidUpdate')
     })
+    posthog.capture('$pageview')
   }, [location])
 
   return null

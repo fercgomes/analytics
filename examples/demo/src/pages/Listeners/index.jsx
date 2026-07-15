@@ -3,6 +3,7 @@ import Navigation from '../../fragments/Nav/index.jsx'
 import outdent from 'outdent'
 import Demo from './demo.jsx'
 import analytics from '../../utils/analytics'
+import posthog from '../../posthog.js'
 
 let listenerHistory = {
   '*': [],
@@ -56,13 +57,16 @@ export default class Listeners extends Component {
     analytics.track('trackItem', {
       foo: 'bar'
     })
+    posthog.capture('listeners_track_event_fired')
   }
   doPage = () => {
     analytics.page()
+    posthog.capture('listeners_page_view_fired')
   }
 
   doCustomEvent = () => {
     analytics.dispatch('customEvent')
+    posthog.capture('listeners_custom_event_dispatched')
   }
 
   render() {
