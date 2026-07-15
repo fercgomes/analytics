@@ -1,5 +1,6 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
+import './posthog.js'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home/index.jsx'
 import About from './pages/About/index.jsx'
